@@ -63,4 +63,5 @@ dependencies {
 
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     implementation "org.reactivestreams:reactive-streams:1.0.2"
+    implementation 'org.jetbrains:annotations:15.0'
 }

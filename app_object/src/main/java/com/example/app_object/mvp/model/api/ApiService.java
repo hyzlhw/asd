@@ -50,10 +50,13 @@ public interface ApiService<T> {
     Observable<ResponseBody> requestFormData(@Url String url, @HeaderMap Map<String, T> headers,
                                              @FieldMap Map<String, T> params);
 
-
     //参数是json串的post请求
     @POST
     Observable<ResponseBody> requestFormData(@Url String url, @Body RequestBody requestBody);
+
+    //参数是json串的post请求
+    @POST
+    Observable<ResponseBody> requestFormData(@Url String url, @HeaderMap Map<String, T> headers, @Body RequestBody requestBody);
 
 
     //单个文件上传

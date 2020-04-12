@@ -2,8 +2,11 @@ package com.example.app_object.mvp.model;
 
 
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.app_object.app.App;
 import com.example.app_object.callback.IDataCallBack;
+import com.example.app_object.callback.ProgressDataCallback;
 import com.example.app_object.di.component.DaggerRxOperateComponent;
 import com.example.app_object.mvp.model.api.ApiService;
 
@@ -12,6 +15,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 
 /**
@@ -110,6 +115,78 @@ public class RxOperateImpl {
             RxSchedulersOperator.retryWhenOperator(mApiService.requestFormData(url, headers, params)).
                     subscribe(getObserver(dataCallBack));
     }
+
+
+    /**
+     * 带JSON串的没有请求头的post请求
+     *
+     * @param url
+     * @param jsonStr
+     * @param dataCallBack
+     * @param <T>
+     */
+    public <T> void requestFormData(String url, String jsonStr, IDataCallBack<T> dataCallBack) {
+        if (jsonStr.isEmpty())
+            return;
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
+        RxSchedulersOperator.retryWhenOperator
+                (mApiService.requestFormData(url, requestBody)).
+                subscribe(getObserver(dataCallBack));
+    }
+
+
+
+    /**
+     * 带请求头的上传json串的post请求
+     *
+     * @param url
+     * @param haders       请求头
+     * @param jsonStr      要上传的json串
+     * @param dataCallBack 结果回调
+     * @param <T>
+     */
+    public <T> void requestFormData(String url, Map<String, T> haders, String jsonStr, IDataCallBack<T> dataCallBack) {
+        if (haders == null || haders.size() == 0)
+            requestFormData(url, jsonStr, dataCallBack);
+        else { //有请求头并且上传json串的post请求
+            if (jsonStr.isEmpty())
+                return;
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonStr);
+            RxSchedulersOperator.retryWhenOperator
+                    (mApiService.requestFormData(url, haders, requestBody)).
+                    subscribe(getObserver(dataCallBack));
+        }
+    }
+
+
+    /**
+     * @param url          下载的文件路径
+     * @param progressDataCallback 下载结果回调
+     * @param isProcess    是否带进度
+     * @param <T>
+     */
+    public <T> void downloadFile(String url, boolean isProcess,
+                                 ProgressDataCallback<T> progressDataCallback) {
+        if (isProcess) {
+            //TODO 需封装带进度的RxJava+Retrofit代码  作业
+
+        } else
+            RxSchedulersOperator.retryWhenOperator(mApiService.downloadFile(url)).
+                    subscribe(getObserver(progressDataCallback));
+    }
+    //单个文件上传
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
